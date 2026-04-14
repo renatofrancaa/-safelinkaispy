@@ -1,0 +1,832 @@
+<!DOCTYPE html><html lang="pt-BR"><head>   <meta charset="UTF-8">  <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <style>
+        html, body { margin: 0; padding: 0; overflow-x: hidden; } 
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* FIX: Remove focus outline from contenteditable elements in visual builder */
+        [contenteditable], 
+        [contenteditable]:focus, 
+        [contenteditable]:focus-visible {
+            outline: none !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+    </style>
+    
+<title data-rocket-custom-head="true">monitor</title><link rel="preconnect" href="https://fonts.rpages.com.br" crossorigin="" data-rocket-custom-head="true"><link rel="preload" href="https://fonts.rpages.com.br/fontsource/fonts/inter@latest/latin-400-normal.woff2" as="font" type="font/woff2" crossorigin="" data-rocket-custom-head="true"><link rel="preload" href="https://fonts.rpages.com.br/fontsource/fonts/inter@latest/latin-700-normal.woff2" as="font" type="font/woff2" crossorigin="" data-rocket-custom-head="true"><style data-component-type="RocketTheme" id="rocket-theme-config" data-rocket-custom-head="true">
+        :root {
+            --color-primary: #2563eb;
+            --color-secondary: #10b981;
+            --color-accent: #3b82f6;
+            --color-background: #ffffff;
+            --color-surface: #f8fafc;
+            --color-text: #1e293b;
+            --font-sans: 'Inter', sans-serif;
+        }
+    </style><style data-rocket-custom-head="true">
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url("fonts/latin-400-normal.woff2") format("woff2");
+        }
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: url("fonts/latin-500-normal.woff2") format("woff2");
+        }
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url("fonts/latin-700-normal.woff2") format("woff2");
+        }
+    </style><style type="text/tailwindcss" data-rocket-custom-head="true">
+        @theme {
+            --color-primary: var(--color-primary);
+            --color-secondary: var(--color-secondary);
+            --color-accent: var(--color-accent);
+            --color-background: var(--color-background);
+            --color-text: var(--color-text);
+            --font-sans: var(--font-sans);
+        }
+        .icon-svg-content {
+            display: inline-block;
+            flex-shrink: 0;
+        }
+    </style><script 3="" src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/executors/200.js" bis_use="true" type="text/javascript" charset="utf-8" data-bis-config="[" facebook.com="" ","twitter.com="" ","youtube-nocookie.com="" embed="" ","="" vk.com="" www.vk.com="" ","linkedin.com="" www.linkedin.com="" instagram.com="" www.instagram.com="" www.google.com="" recaptcha="" api2="" hangouts.google.com="" webchat="" calendar="" maps="" embed","spotify.com="" ","soundcloud.com="" player.vimeo.com="" disqus.com="" tgwidget.com="" js.driftt.com="" ","friends2follow.com","="" widget","login","="" video.bigmir.net="" ","blogger.com","="" smartlock.google.com="" keep.google.com="" web.tolstoycomments.com="" ","moz-extension:="" ","chrome-extension:="" auth="" analytics.google.com="" ","adclarity.com","paddle.com="" checkout","hcaptcha.com","recaptcha.net","2captcha.com","accounts.google.com","www.google.com="" shopping="" customerreviews","buy.tinypass.com","gstatic.com","secureir.ebaystatic.com","docs.google.com","contacts.google.com","github.com","mail.google.com","chat.google.com","audio.xpleer.com","keepa.com","static.xx.fbcdn.net","sas.selleramp.com","1plus1.video","console.googletagservices.com","="" lnkd.demdex.net="" radar.cedexis.com="" li.protechts.net="" ","challenges.cloudflare.com="" ","ogs.google.com","="" www.ukrnafta.com="" data="" map="" maps.google.com="" maps","="" www.openstreetmap.org="" export="" embed.html","="" d="" u="" embed"]"="" data-dynamic-id="b964c47e-079b-4082-b2ce-ffe6d56f669a" data-rocket-custom-head="true"></script><script>
+document.addEventListener("DOMContentLoaded", () => {
+    const COOKIE_NAME = 'rpages_sid';
+    const COOKIE_DAYS = 7;
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    }
+
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function generateSid() {
+         return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    let sid = getCookie(COOKIE_NAME);
+    if (!sid) {
+        sid = generateSid();
+        setCookie(COOKIE_NAME, sid, COOKIE_DAYS);
+    }
+
+    const baseEndpoint = "https://leads-v2.rpages.com.br/api/track/pageview/311669bd39a783002";
+    const trackingUrl = new URL(baseEndpoint);
+    const currentParams = new URLSearchParams(window.location.search);
+
+    // Anexa todos os parâmetros da URL atual (UTMs, etc) à URL de rastreamento
+    currentParams.forEach((value, key) => {
+        trackingUrl.searchParams.append(key, value);
+    });
+
+    const payload = {
+        ref: document.referrer || window.location.href,
+        sid: sid
+    };
+
+    navigator.sendBeacon(trackingUrl.toString(), new Blob([JSON.stringify(payload)], { type: "text/plain" }));
+
+    window.dispatchEvent(new CustomEvent('rpages_pageview_sent', { detail: { sid: sid } }));
+});
+</script><link rel="stylesheet" href="css/311669bd39a783002.min.css"></head>
+<body class="font-sans text-text bg-background antialiased" bis_status="ok" bis_frame_id="1201" bis_body_id="fr_6ut39xh3n1d46yrtchwjcj" bis_depth="0" bis_chainid="1" bis_size="{" x":0,"y":0,"w":1224,"h":5679,"abs_x":400,"abs_y":104}"=""><header id="main-navigation" class="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-slate-100">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between"><div class="flex items-center gap-2">
+                <i class="icon-svg-content w-8 h-8" style="background-color:var(--color-primary); mask: url('images/shield-halved.svg') center center / contain no-repeat;"></i>
+                <span class="text-xl font-bold tracking-tight text-slate-900">SafeLink AI</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="text-sm font-medium text-slate-600 hover:text-primary transition-colors cursor-pointer">Features</a>
+                <a href="#how-it-works" class="text-sm font-medium text-slate-600 hover:text-primary transition-colors cursor-pointer">How it Works</a>
+                <a href="#pricing" class="text-sm font-medium text-slate-600 hover:text-primary transition-colors cursor-pointer">Pricing</a>
+                <a href="#cta" class="bg-primary text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-blue-700 transition-all shadow-md shadow-blue-200 cursor-pointer">Get Started Now</a>
+            </div></nav>
+    </header>
+
+    <section id="hero-banner" class="pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-primary text-xs font-bold uppercase tracking-wider mb-6">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                        </span>
+                        Real-Time Activity Monitoring
+                    </div>
+                    <h1 class="text-4xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-6">
+                        Master your <span class="text-primary">digital</span> environment with AI Intelligence.
+                    </h1>
+                    <p class="text-lg text-slate-600 mb-8 max-w-xl mx-auto lg:mx-0">
+                        Gain deep insights into your device usage, protect your privacy, and optimize your online time with an advanced security dashboard.
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                        <a href="#pricing" class="w-full sm:w-auto bg-primary text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-2 cursor-pointer">
+                            Get Instant Access
+                            <i class="icon-svg-content w-5 h-5 !bg-white" style="mask: url('images/arrow-right.svg') center center / contain no-repeat;"></i>
+                        </a>
+                        <div class="flex items-center gap-2 text-slate-500 text-sm">
+                            <i class="icon-svg-content w-4 h-4" style="background-color:currentColor; mask: url('images/lock.svg') center center / contain no-repeat;"></i>
+                            End-to-End Encryption
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 to-emerald-500/10 rounded-3xl blur-3xl"></div>
+                    <div class="relative bg-white p-4 rounded-2xl shadow-2xl border border-slate-100">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&h=800&auto=format&fit=crop" width="1200" height="800" alt="AI Security Dashboard" class="rounded-lg w-full h-auto object-cover">
+                        <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-xl border border-slate-100 hidden sm:block">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                                    <i class="icon-svg-content w-5 h-5" style="background-color:var(--color-secondary); mask: url('images/check.svg') center center / contain no-repeat;"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-slate-500 font-medium">System Status</p>
+                                    <p class="text-sm font-bold text-slate-900">100% Protected</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="social-proof" class="py-12 bg-slate-50 border-y border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm font-bold text-slate-400 uppercase tracking-widest mb-10">Trusted by thousands of users worldwide</p>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex gap-1 mb-4">
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <p class="text-slate-600 italic mb-4">"CyberGuard AI completely changed my perspective on digital security. Now I understand exactly where I spend my time and how to protect my data."</p>
+                    <p class="font-bold text-slate-900 text-sm">— Richard M., Systems Analyst</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex gap-1 mb-4">
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <p class="text-slate-600 italic mb-4">"The behavioral analysis helped me identify usage patterns I hadn't noticed. An essential tool for digital awareness today."</p>
+                    <p class="font-bold text-slate-900 text-sm">— Julia S., Digital Entrepreneur</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex gap-1 mb-4">
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:#f59e0b; mask: url('images/star.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <p class="text-slate-600 italic mb-4">"Secure, discreet, and very efficient. The unusual activity alerts gave me the peace of mind I needed for my personal devices."</p>
+                    <p class="font-bold text-slate-900 text-sm">— Marcus T., Consultant</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">Advanced Intelligence Features</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto">Everything you need for a safe and organized digital life in one single place.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl hover:shadow-blue-100 transition-all group">
+                    <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-6">
+                        <i class="icon-svg-content w-6 h-6 !bg-white" style="mask: url('images/clock-rotate-left.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Real-Time Insights</h3>
+                    <p class="text-slate-600">Monitor your digital activity as it happens, with instant updates on your dashboard.</p>
+                </div>
+                <div class="p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl hover:shadow-blue-100 transition-all group">
+                    <div class="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center mb-6">
+                        <i class="icon-svg-content w-6 h-6 !bg-white" style="mask: url('images/brain.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Behavior Analysis</h3>
+                    <p class="text-slate-600">Our AI identifies usage patterns and suggests improvements for your productivity and digital well-being.</p>
+                </div>
+                <div class="p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl hover:shadow-blue-100 transition-all group">
+                    <div class="w-12 h-12 bg-blue-400 rounded-xl flex items-center justify-center mb-6">
+                        <i class="icon-svg-content w-6 h-6 !bg-white" style="mask: url('images/laptop-medical.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Multi-Device Dashboard</h3>
+                    <p class="text-slate-600">Connect your smartphone, tablet, and computer to have a unified view of your digital ecosystem.</p>
+                </div>
+                <div class="p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl hover:shadow-blue-100 transition-all group">
+                    <div class="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center mb-6">
+                        <i class="icon-svg-content w-6 h-6 !bg-white" style="mask: url('https://cdn.rpages.com.br/assets/awesome/7.1.0/solid/cloud-shield.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Secure Cloud Access</h3>
+                    <p class="text-slate-600">Access your data from anywhere with bank-level security and AES-256 encryption.</p>
+                </div>
+                <div class="p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl hover:shadow-blue-100 transition-all group">
+                    <div class="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center mb-6">
+                        <i class="icon-svg-content w-6 h-6 !bg-white" style="mask: url('images/bell.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Activity Alerts</h3>
+                    <p class="text-slate-600">Receive immediate notifications about unusual patterns or unauthorized access attempts.</p>
+                </div>
+                <div class="p-8 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl hover:shadow-blue-100 transition-all group">
+                    <div class="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center mb-6">
+                        <i class="icon-svg-content w-6 h-6 !bg-white" style="mask: url('images/chart-pie.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Screen Time</h3>
+                    <p class="text-slate-600">Detailed reports on how much time you spend on each app and site category.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="py-24 bg-slate-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="text-3xl lg:text-4xl font-extrabold mb-4">Setup in 3 Simple Steps</h2>
+                <p class="text-slate-400">Fast, easy, and completely secure.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="relative text-center">
+                    <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg shadow-blue-500/20">1</div>
+                    <h3 class="text-xl font-bold mb-4">Connect Your Devices</h3>
+                    <p class="text-slate-400">Install our secure interface on the devices you wish to personally monitor.</p>
+                    <div class="hidden md:block absolute top-8 left-1/2 w-full h-0.5 border-t-2 border-dashed border-slate-700 -z-10"></div>
+                </div>
+                <div class="relative text-center">
+                    <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg shadow-blue-500/20">2</div>
+                    <h3 class="text-xl font-bold mb-4">Access Your Dashboard</h3>
+                    <p class="text-slate-400">Log in to your centralized dashboard through any secure browser.</p>
+                    <div class="hidden md:block absolute top-8 left-1/2 w-full h-0.5 border-t-2 border-dashed border-slate-700 -z-10"></div>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg shadow-blue-500/20">3</div>
+                    <h3 class="text-xl font-bold mb-4">Receive Insights & Alerts</h3>
+                    <p class="text-slate-400">Start viewing your data and receive intelligent alerts about your digital security.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="benefits" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="order-2 lg:order-1">
+                    <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1200&h=1000&auto=format&fit=crop" width="1200" height="1000" alt="Digital Security Benefits" class="rounded-3xl shadow-2xl" loading="lazy">
+                </div>
+                <div class="order-1 lg:order-2">
+                    <h2 class="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-8">Why Choose SafeLink AI?</h2>
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="mt-1 w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                                <i class="icon-svg-content w-3 h-3" style="background-color:var(--color-secondary); mask: url('images/check.svg') center center / contain no-repeat;"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 mb-1">Total Awareness</h4>
+                                <p class="text-slate-600">Deeply understand your digital habits to make smarter decisions.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="mt-1 w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                                <i class="icon-svg-content w-3 h-3" style="background-color:var(--color-secondary); mask: url('images/check.svg') center center / contain no-repeat;"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 mb-1">Proactive Security</h4>
+                                <p class="text-slate-600">Anticipate risks and protect your personal information before it's compromised.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="mt-1 w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                                <i class="icon-svg-content w-3 h-3" style="background-color:var(--color-secondary); mask: url('images/check.svg') center center / contain no-repeat;"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 mb-1">Control and Clarity</h4>
+                                <p class="text-slate-600">Have full dominance over who and what accesses your data on your devices.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="mt-1 w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                                <i class="icon-svg-content w-3 h-3" style="background-color:var(--color-secondary); mask: url('images/check.svg') center center / contain no-repeat;"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 mb-1">Risk Reduction</h4>
+                                <p class="text-slate-600">Minimize data exposure and improve your cyber security posture.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="interface-showcase" class="py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-16">Clean and Intuitive Interface</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-2 rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+                    <div class="bg-slate-50 p-4 border-b border-slate-100 flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400">USAGE CHARTS</span>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:var(--color-primary); mask: url('images/chart-line.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div class="h-32 bg-slate-100 rounded flex items-end gap-2 p-2">
+                            <div class="flex-1 bg-primary rounded-t" style="height: 60%"></div>
+                            <div class="flex-1 bg-primary/60 rounded-t" style="height: 85%"></div>
+                            <div class="flex-1 bg-primary rounded-t" style="height: 45%"></div>
+                            <div class="flex-1 bg-secondary rounded-t" style="height: 70%"></div>
+                            <div class="flex-1 bg-primary rounded-t" style="height: 90%"></div>
+                        </div>
+                        <p class="text-xs text-slate-500">Weekly productivity vs entertainment analysis.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-2 rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+                    <div class="bg-slate-50 p-4 border-b border-slate-100 flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400">NOTIFICATIONS</span>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:var(--color-accent); mask: url('images/bell.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <div class="p-4 space-y-3">
+                        <div class="flex items-center gap-3 p-2 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                            <div class="text-[10px] font-bold text-blue-700">ALERT</div>
+                            <div class="text-[11px] text-slate-700">New login detected in London.</div>
+                        </div>
+                        <div class="flex items-center gap-3 p-2 bg-emerald-50 rounded-lg border-l-4 border-emerald-500">
+                            <div class="text-[10px] font-bold text-emerald-700">INFO</div>
+                            <div class="text-[11px] text-slate-700">Weekly backup completed successfully.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-2 rounded-2xl shadow-lg border border-slate-100 overflow-hidden md:col-span-2 lg:col-span-1">
+                    <div class="bg-slate-50 p-4 border-b border-slate-100 flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-400">SECURITY SCORE</span>
+                        <i class="icon-svg-content w-4 h-4" style="background-color:var(--color-secondary); mask: url('https://cdn.rpages.com.br/assets/awesome/7.1.0/solid/shield-check.svg') center center / contain no-repeat;"></i>
+                    </div>
+                    <div class="p-8 flex flex-col items-center justify-center">
+                        <div class="relative w-24 h-24 mb-4">
+                            <svg class="w-full h-full" viewBox="0 0 36 36">
+                                <path class="stroke-slate-100 stroke-[3] fill-none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                                <path class="stroke-secondary stroke-[3] fill-none" stroke-dasharray="92, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center font-bold text-2xl text-slate-900">92%</div>
+                        </div>
+                        <p class="text-sm font-medium text-slate-600">Excellent active protection</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="py-24 bg-white border-y border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">Simple, Transparent Pricing</h2>
+                <p class="text-slate-600">Invest in your digital peace of mind with a one-time payment.</p>
+            </div>
+            <div class="max-w-md mx-auto">
+                <div class="relative bg-white rounded-3xl shadow-2xl border-2 border-primary overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-primary text-white text-[10px] font-bold px-4 py-1 rounded-bl-xl uppercase tracking-widest">Best Value</div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">Lifetime Access</h3>
+                        <div class="flex items-baseline gap-1 mb-6">
+                            <span class="text-4xl font-extrabold text-slate-900">$47</span>
+                            <span class="text-slate-500 font-medium">/one-time</span>
+                        </div>
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex gap-3 text-slate-600">
+                                <i class="icon-svg-content w-5 h-5 !bg-emerald-500" style="mask: url('images/circle-check.svg') center center / contain no-repeat;"></i>
+                                Unlimited device connections
+                            </li>
+                            <li class="flex gap-3 text-slate-600">
+                                <i class="icon-svg-content w-5 h-5 !bg-emerald-500" style="mask: url('images/circle-check.svg') center center / contain no-repeat;"></i>
+                                AI Behavioral Insights
+                            </li>
+                            <li class="flex gap-3 text-slate-600">
+                                <i class="icon-svg-content w-5 h-5 !bg-emerald-500" style="mask: url('images/circle-check.svg') center center / contain no-repeat;"></i>
+                                24/7 Priority Support
+                            </li>
+                            <li class="flex gap-3 text-slate-600">
+                                <i class="icon-svg-content w-5 h-5 !bg-emerald-500" style="mask: url('images/circle-check.svg') center center / contain no-repeat;"></i>
+                                Future platform updates
+                            </li>
+                        </ul>
+                        <a href="https://pay.mycheckoutt.com/019ada55-17e9-7319-bb0e-2b61b337a943" class="block w-full bg-primary text-white text-center py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 cursor-pointer">
+                            Secure My Access Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section><section id="faq" class="py-24 bg-white">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl lg:text-4xl font-extrabold text-slate-900 text-center mb-12">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center font-bold text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer" onclick="toggleFaq(this)">
+                        Is this legal?
+                        <i class="icon-svg-content w-4 h-4 transition-transform duration-200" style="background-color:currentColor; mask: url('images/chevron-down.svg') center center / contain no-repeat;"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 py-4 text-slate-600 bg-slate-50 border-t border-slate-100">
+                        Yes, CyberGuard AI is a tool designed for personal use and on authorized devices, focusing on personal digital security and conscious monitoring.
+                    </div>
+                </div>
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center font-bold text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer" onclick="toggleFaq(this)">
+                        Does the platform access my private messages?
+                        <i class="icon-svg-content w-4 h-4 transition-transform duration-200" style="background-color:currentColor; mask: url('images/chevron-down.svg') center center / contain no-repeat;"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 py-4 text-slate-600 bg-slate-50 border-t border-slate-100">
+                        No. Our tool provides only behavioral insights, app usage, and security alerts. We value your privacy and do not collect the content of private conversations.
+                    </div>
+                </div>
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center font-bold text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer" onclick="toggleFaq(this)">
+                        Is my data secure?
+                        <i class="icon-svg-content w-4 h-4 transition-transform duration-200" style="background-color:currentColor; mask: url('images/chevron-down.svg') center center / contain no-repeat;"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 py-4 text-slate-600 bg-slate-50 border-t border-slate-100">
+                        Absolutely. We use military-grade encryption for all stored and transmitted data. Your information is protected and accessible only by you through multi-factor authentication.
+                    </div>
+                </div>
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center font-bold text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer" onclick="toggleFaq(this)">
+                        Which devices does it work on?
+                        <i class="icon-svg-content w-4 h-4 transition-transform duration-200" style="background-color:currentColor; mask: url('images/chevron-down.svg') center center / contain no-repeat;"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 py-4 text-slate-600 bg-slate-50 border-t border-slate-100">
+                        CyberGuard AI is compatible with Windows, macOS, Android, and iOS. You can monitor all of them through the same centralized dashboard.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script id="faq-logic">/*<![CDATA[*/
+if (!window.faqInitialized) { window.faqInitialized = true; function toggleFaq(btn) { const content = btn.nextElementSibling; const icon = btn.querySelector('.icon-svg-content'); const allContents = document.querySelectorAll('.faq-content'); const allIcons = document.querySelectorAll('.faq-toggle .icon-svg-content'); allContents.forEach(c => { if (c !== content) c.classList.add('hidden'); }); allIcons.forEach(i => { if (i !== icon) i.style.transform = 'rotate(0deg)'; }); content.classList.toggle('hidden'); if (content.classList.contains('hidden')) { icon.style.transform = 'rotate(0deg)'; } else { icon.style.transform = 'rotate(180deg)'; } } }
+/*]]>*/</script>
+    </section>
+
+    <section id="cta" class="py-24 bg-primary relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"></div>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="text-3xl lg:text-5xl font-extrabold text-white mb-6">Take control of your digital environment today.</h2>
+            <p class="text-blue-100 text-lg mb-10 max-w-2xl mx-auto">Join thousands of users who chose the clarity and security of artificial intelligence applied to daily life.</p>
+            
+            
+        </div>
+    </section>
+
+    <footer id="main-footer" class="py-12 bg-slate-950 text-slate-400 border-t border-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="flex items-center gap-2">
+                    <i class="icon-svg-content w-6 h-6" style="background-color:var(--color-primary); mask: url('images/shield-halved.svg') center center / contain no-repeat;"></i>
+                    <span class="text-lg font-bold text-white">SafeLink AI</span>
+                </div>
+                <div class="flex gap-8 text-sm">
+                    <a href="#" class="hover:text-white transition-colors cursor-pointer">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors cursor-pointer">Terms of Use</a>
+                    <a href="#" class="hover:text-white transition-colors cursor-pointer">Ethics & Transparency</a>
+                </div>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-primary transition-all cursor-pointer">
+                        <i class="icon-svg-content w-4 h-4 !bg-white" style="mask: url('images/linkedin-in.svg') center center / contain no-repeat;"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-primary transition-all cursor-pointer">
+                        <i class="icon-svg-content w-4 h-4 !bg-white" style="mask: url('images/x-twitter.svg') center center / contain no-repeat;"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-slate-900 text-center text-xs">
+                <p>© 2024 CyberGuard AI. Proactive security technology for a conscious digital world. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script id="form-helper">/*<![CDATA[*/
+function sendFormData(formId) {
+            const form = document.getElementById(formId);
+            const msgSuccess = form.getAttribute('data-rocket-msg-sucess');
+            const msgError = form.getAttribute('data-rocket-msg-error');
+            
+            // Simulação simples de envio
+            const button = form.querySelector('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = 'Enviando...';
+            button.disabled = true;
+
+            setTimeout(() => {
+                alert(msgSuccess);
+                button.innerHTML = originalText;
+                button.disabled = false;
+                form.reset();
+            }, 1000);
+        }
+/*]]>*/</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  // Configure sua URL base aqui
+  const BASE_URL = "https://leads-v2.rpages.com.br/api/forms";
+  const PROJECT_UNIQID = "311669bd39a783002";
+
+  function getFormMsgKey(form) {
+    return form.getAttribute('rocket-form-id') || form.id || 'rocket-form';
+  }
+
+  function escSelector(value) {
+    // evita quebrar querySelector em chaves comuns
+    if (window.CSS && CSS.escape) return CSS.escape(String(value));
+    return String(value).replace(/["\\]/g, '\\$&');
+  }
+
+  function removeRocketMessage(form) {
+    const key = getFormMsgKey(form);
+    const selector = '[data-rocket-form-message-for="' + escSelector(key) + '"]';
+    const existing = form.parentElement ? form.parentElement.querySelector(selector) : null;
+    if (existing) existing.remove();
+  }
+
+  function createIconSuccess() {
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("style", "width:16px; height:16px; flex:0 0 auto; display:block;");
+    svg.setAttribute("viewBox", "0 0 20 20");
+    svg.setAttribute("fill", "currentColor");
+    svg.setAttribute("aria-hidden", "true");
+
+    const path = document.createElementNS(ns, "path");
+    path.setAttribute("fill-rule", "evenodd");
+    path.setAttribute("clip-rule", "evenodd");
+    path.setAttribute("d", "M16.704 5.29a1 1 0 010 1.414l-7.5 7.5a1 1 0 01-1.414 0l-3.5-3.5A1 1 0 015.704 9.29l2.793 2.793 6.793-6.793a1 1 0 011.414 0z");
+    svg.appendChild(path);
+
+    return svg;
+  }
+
+  function createIconError() {
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("style", "width:16px; height:16px; flex:0 0 auto; display:block;");
+    svg.setAttribute("viewBox", "0 0 20 20");
+    svg.setAttribute("fill", "currentColor");
+    svg.setAttribute("aria-hidden", "true");
+
+    const path = document.createElementNS(ns, "path");
+    path.setAttribute("fill-rule", "evenodd");
+    path.setAttribute("clip-rule", "evenodd");
+    path.setAttribute("d", "M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z");
+    svg.appendChild(path);
+
+    return svg;
+  }
+
+  function insertRocketMessage(form, type, text) {
+    removeRocketMessage(form);
+
+    const key = getFormMsgKey(form);
+
+    const p = document.createElement("p");
+    p.setAttribute("data-rocket-form-message", type);
+    p.setAttribute("data-rocket-form-message-for", key);
+
+    if (type === "success") {
+      p.setAttribute(
+        "style",
+        "margin-top:8px; display:flex; align-items:center; gap:8px; font-size:14px; line-height:1; color:#047857;"
+      );
+      p.appendChild(createIconSuccess());
+    } else {
+      p.setAttribute(
+        "style",
+        "margin-top:8px; display:flex; align-items:center; gap:8px; font-size:14px; line-height:1; color:#be123c;"
+      );
+      p.appendChild(createIconError());
+    }
+
+    // ✅ sem template string e sem escape custom: texto vai como texto puro
+    p.appendChild(document.createTextNode(text || ""));
+
+    // ✅ abaixo do form
+    form.insertAdjacentElement("afterend", p);
+  }
+
+  function getSubmitButtons(form) {
+    const buttons = Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"]'));
+    if (buttons.length === 0) {
+      const firstBtn = form.querySelector("button");
+      if (firstBtn) buttons.push(firstBtn);
+    }
+    return buttons;
+  }
+
+  function setSubmittingState(form, isSubmitting) {
+    const buttons = getSubmitButtons(form);
+
+    buttons.forEach((btn) => {
+      if (btn.tagName.toLowerCase() === "button") {
+        if (!btn.dataset.rocketOriginalText) btn.dataset.rocketOriginalText = btn.textContent || "";
+        btn.textContent = isSubmitting ? "Enviando..." : btn.dataset.rocketOriginalText;
+      } else {
+        if (!btn.dataset.rocketOriginalValue) btn.dataset.rocketOriginalValue = btn.value || "";
+        btn.value = isSubmitting ? "Enviando..." : btn.dataset.rocketOriginalValue;
+      }
+
+      btn.disabled = !!isSubmitting;
+      btn.setAttribute("aria-disabled", isSubmitting ? "true" : "false");
+      btn.style.opacity = isSubmitting ? "0.7" : "";
+      btn.style.cursor = isSubmitting ? "not-allowed" : "";
+    });
+  }
+
+  async function sendFormToGoBackend(params) {
+    const url = params.url;
+    const projectUniqid = params.projectUniqid;
+    const formKey = params.formKey;
+    const fields = params.fields;
+
+    if (!projectUniqid || !formKey) {
+      throw new Error("projectUniqid e formKey são obrigatórios");
+    }
+
+    const formData = new FormData();
+    formData.append("project_uniqid", projectUniqid);
+    formData.append("form_key", formKey);
+
+    for (const key in fields) {
+      if (!Object.prototype.hasOwnProperty.call(fields, key)) continue;
+      const value = fields[key];
+
+      if (typeof value === "object" && value !== null) {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        formData.append(key, value);
+      }
+    }
+
+    // ⚠️ Não setar Content-Type manualmente com FormData
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      body: formData
+    });
+
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      throw new Error("Erro " + res.status + ": " + JSON.stringify(data));
+    }
+    return data;
+  }
+
+  async function sendFormData(formId = "myForm") {
+    const form = document.getElementById(formId);
+
+    if (!form || form.tagName.toLowerCase() !== "form") {
+      console.error("sendFormData: formulário não encontrado ou não é <form>.");
+      return;
+    }
+
+    // remove msg antiga sempre que enviar novamente
+    removeRocketMessage(form);
+
+    const msgSuccess =
+      form.getAttribute("data-rocket-msg-sucess") ||
+      form.getAttribute("data-rocket-msg-success") ||
+      "Enviado com sucesso.";
+
+    const msgError =
+      form.getAttribute("data-rocket-msg-error") ||
+      "Não foi possível enviar.";
+
+    const formKey = form.getAttribute("rocket-form-id");
+    const webhookUrl = form.getAttribute("data-webhook-url");
+    const redirectUrl = form.getAttribute("data-redirect-url");
+
+    const fd = new FormData(form);
+    const fields = {};
+    fd.forEach((value, key) => (fields[key] = value));
+
+    setSubmittingState(form, true);
+
+    try {
+      const result = await sendFormToGoBackend({
+        url: BASE_URL,
+        projectUniqid: PROJECT_UNIQID,
+        formKey: formKey,
+        fields: fields
+      });
+
+      console.log("Formulário enviado com sucesso:", result);
+      insertRocketMessage(form, "success", msgSuccess);
+
+      if (webhookUrl) {
+        try {
+          await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(fields)
+          });
+          console.log("Webhook disparado com sucesso.");
+        } catch (webhookError) {
+          console.error("Erro ao disparar webhook:", webhookError);
+        }
+      }
+
+      if (redirectUrl) {
+        try {
+          const urlObj = new URL(
+            redirectUrl.startsWith("http")
+              ? redirectUrl
+              : window.location.origin + redirectUrl
+          );
+
+          for (const key in fields) {
+            if (Object.prototype.hasOwnProperty.call(fields, key)) {
+              urlObj.searchParams.append(key, fields[key]);
+            }
+          }
+
+          // Add current URL parameters
+          const currentParams = new URLSearchParams(window.location.search);
+          currentParams.forEach((value, key) => {
+              if (!urlObj.searchParams.has(key)) {
+                  urlObj.searchParams.append(key, value);
+              }
+          });
+
+          window.location.href = urlObj.toString();
+          return;
+        } catch (redirectError) {
+          console.error("Erro ao processar redirecionamento:", redirectError);
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+            return;
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao enviar formulário:", error);
+      insertRocketMessage(form, "error", msgError);
+    } finally {
+      setSubmittingState(form, false);
+    }
+  }
+</script><script>window.addEventListener("rpages_pageview_sent", (event) => { const U = "https://leads-v2.rpages.com.br/api/track/time"; const P = "311669bd39a783002"; const S = event.detail.sid; const s = { session_id: S, t0: performance.now(), vs: document.visibilityState === "visible" ? performance.now() : null, tv: 0, tm: null, sp: false, ls: -1, ec: 0, }; function nv() { let ms = s.tv; if (s.vs != null) ms += (performance.now() - s.vs); return ms; } function sd(reason) { const seconds = Math.floor(nv() / 1000); if (seconds < 1) return; const force = reason === "pagehide" || reason === "visibility:hidden" || reason === "beforeunload" || (typeof reason === "string" && reason.startsWith("exit-intent:")); if (!force && seconds === s.ls) return; s.ls = seconds; const payload = JSON.stringify({ project_uniqid: P, session_id: s.session_id, seconds: seconds }); try { if (navigator.sendBeacon) { const ok = navigator.sendBeacon( U, new Blob([payload], { type: "application/json" }) ); if (ok) return; } } catch (_) {} try { fetch(U, { method: "POST", headers: { "Content-Type": "application/json" }, body: payload, keepalive: true }).catch(() => {}); } catch (_) {} } function sc() { if (s.sp) return; const elapsed = performance.now() - s.t0; const delay = elapsed < 30000 ? 5000 : 30000; s.tm = setTimeout(() => { if (s.sp) return; if (document.visibilityState === "visible") { sd(elapsed < 30000 ? "tick:5s" : "tick:30s"); } sc(); }, delay); } sc(); function ex(x, y) { const w = window.innerWidth; const h = window.innerHeight; if (y <= 0) return "top"; if (y >= h - 1) return "bottom"; if (x <= 0) return "left"; if (x >= w - 1) return "right"; return null; } function hx(e) { if (e.relatedTarget !== null) return; const edge = ex(e.clientX, e.clientY); if (!edge) return; const now = Date.now(); if (now < s.ec) return; s.ec = now + 5000; sd("exit-intent:" + edge); } document.addEventListener("pointerout", hx, true); document.addEventListener("mouseout", hx, true); document.addEventListener("visibilitychange", () => { const t = performance.now(); if (document.visibilityState === "hidden") { if (s.vs != null) { s.tv += (t - s.vs); s.vs = null; } sd("visibility:hidden"); } else { s.vs = t; } }); window.addEventListener("pagehide", (e) => { const t = performance.now(); if (s.vs != null) { s.tv += (t - s.vs); s.vs = null; } sd(e.persisted ? "pagehide:bfcache" : "pagehide"); st(); }); window.addEventListener("beforeunload", () => { sd("beforeunload"); }); function st() { s.sp = true; if (s.tm) clearTimeout(s.tm); s.tm = null; } });</script><script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let tags = document.querySelectorAll('a')
+        tags.forEach(tagA => {
+            var urlLink = tagA.getAttribute('href')
+            var urlParameters = window.location.search
+            if (
+                urlLink != 'javascript:;' &&
+                urlLink != '' &&
+                urlLink.charAt(0) !== '#'
+            ) {
+                if (urlParameters.charAt(0) === '?') {
+                    urlParameters = urlParameters.substring(1)
+                }
+                var redirectUrl = urlLink
+                redirectUrl += redirectUrl.includes('?') ? '&' + urlParameters : (urlParameters != '' ? '?' + urlParameters : '')
+                tagA.setAttribute('href', redirectUrl)
+            }
+        })
+    })
+</script>
+</body></html>
